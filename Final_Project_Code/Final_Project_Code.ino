@@ -28,6 +28,12 @@ int buttonBState = 0;
 int lastButtonBState = 0;
 bool B = false;
 
+//setup button Fruit C
+const int buttonCPin = 5;
+int buttonCState = 0;
+int lastButtonCState = 0;
+bool C = false;
+
 void setup() {
   servoBackground.attach(9); //Background servo goes with pin 9
   servoHades.attach(10); //Hades servo goes with pin 10
@@ -39,15 +45,16 @@ void setup() {
   pinMode(buttonFloorPin, INPUT); //FloorButton goes with pin 6
   pinMode(buttonAPin, INPUT); //FloorButton goes with pin 7
   pinMode(buttonBPin, INPUT); //FloorButton goes with pin 8
+  pinMode(buttonCPin, INPUT); //FloorButton goes with pin 5
   Serial.begin(9600);
   Serial.println("Start");
 }
 
 
 void loop() {
-
-  buttonFloorState = digitalRead(buttonFloorPin);
+  
   // Read floor button
+  buttonFloorState = digitalRead(buttonFloorPin);
   if (buttonFloorState != lastButtonFloorState) {
     if (buttonFloorState == HIGH) {
       FloorOpen = true;
@@ -58,12 +65,19 @@ void loop() {
   //If the floor is open:
   if (FloorOpen == true) {
     servoFloor.write(80);
-    servoBackground.write(180);
+    
+    // make sunny background when A B C are collected
+    if (A && B && C) {
+      servoBackground.write(0);
+    } else {
+      servoBackground.write(180);
+    }
   }
   lastButtonFloorState = buttonFloorState;
 
   buttonAState = digitalRead(buttonAPin);
   buttonBState = digitalRead(buttonBPin);
+  buttonCState = digitalRead(buttonCPin);
 
 
 
@@ -82,17 +96,25 @@ void loop() {
       Serial.println("B is there");
     }
   }
-  /*
-      if (A || B){
-        Serial.println("One fruit");
-        servoHades.write(80);
-      }*/
-  if (A && B) {
-    Serial.println("Two fruit");
+
+  //Read fruit C
+  if (buttonCState != lastButtonCState) {
+    if (buttonCState == HIGH) {
+      C = true;
+      Serial.println("C is there");
+    }
+  }
+
+  //check how many fruit are collected
+  if (A && B && C) {
+    Serial.println("Three fruit");
     servoHades.write(180);
-  } else if (A || B) {
+  } else if ((A && B) || (C && B) || (A && C)) {
+    Serial.println("Two fruit");
+    servoHades.write(120);
+  } else if (A || B || C) {
     Serial.println("One fruit");
-    servoHades.write(80);
+    servoHades.write(60);
   } else {
     servoHades.write(0);
     Serial.println("No fruit");
@@ -100,19 +122,7 @@ void loop() {
 
   lastButtonAState = buttonAState;
   lastButtonBState = buttonBState;
-
-
-
-
+  lastButtonCState = buttonCState;
 
 }
-
-
-/*
-  if (digitalRead(buttonPin2) == HIGH){
-  servoBackground.write(180);
-  } else{
-  servoBackground.write(0);
-  }
-*/
 
