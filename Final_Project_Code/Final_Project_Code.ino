@@ -1,5 +1,8 @@
 #include <Servo.h>
 
+// setup Servo Background
+Servo servoBackground;
+
 //setup Servo Hades
 Servo servoHades;
 
@@ -26,6 +29,7 @@ int lastButtonBState = 0;
 bool B = false;
 
 void setup() {
+  servoBackground.attach(9); //Background servo goes with pin 9
   servoHades.attach(10); //Hades servo goes with pin 10
   servoFloor.attach(11); //Floor servo goes with pin 11
   servoFloor.write(140);
@@ -54,7 +58,7 @@ void loop() {
   //If the floor is open:
   if (FloorOpen == true) {
     servoFloor.write(80);
-   
+    servoBackground.write(180);
   }
   lastButtonFloorState = buttonFloorState;
 
