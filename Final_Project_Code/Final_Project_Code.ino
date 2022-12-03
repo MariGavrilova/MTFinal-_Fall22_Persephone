@@ -34,6 +34,12 @@ int buttonCState = 0;
 int lastButtonCState = 0;
 bool C = false;
 
+//setup button HappyEnd
+const int buttonEndPin = 4;
+int buttonEndState = 0;
+int lastButtonEndState = 0;
+bool End = false;
+
 void setup() {
   servoBackground.attach(9); //Background servo goes with pin 9
   servoHades.attach(10); //Hades servo goes with pin 10
@@ -46,6 +52,7 @@ void setup() {
   pinMode(buttonAPin, INPUT); //FloorButton goes with pin 7
   pinMode(buttonBPin, INPUT); //FloorButton goes with pin 8
   pinMode(buttonCPin, INPUT); //FloorButton goes with pin 5
+  pinMode(buttonEndPin, INPUT); //FloorButton goes with pin 5
   Serial.begin(9600);
   Serial.println("Start");
 }
@@ -66,11 +73,13 @@ void loop() {
   if (FloorOpen == true) {
     servoFloor.write(80);
     
-    // make sunny background when A B C are collected
-    if (A && B && C) {
-      servoBackground.write(0);
-    } else {
+    // make sunny background on HappyEnd button
+    if (buttonEndState != lastButtonEndState) {
+      if (buttonEndState == HIGH){
+        servoBackground.write(0);
+      }else {
       servoBackground.write(180);
+      }
     }
   }
   lastButtonFloorState = buttonFloorState;
@@ -125,4 +134,3 @@ void loop() {
   lastButtonCState = buttonCState;
 
 }
-
