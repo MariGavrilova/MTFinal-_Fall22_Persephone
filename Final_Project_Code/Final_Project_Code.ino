@@ -44,15 +44,15 @@ void setup() {
   servoBackground.attach(9); //Background servo goes with pin 9
   servoHades.attach(10); //Hades servo goes with pin 10
   servoFloor.attach(11); //Floor servo goes with pin 11
-  servoFloor.write(140);
-  servoHades.write(0);
+  servoFloor.write(180);
+  servoHades.write(180);
   servoBackground.write(0);
 
   pinMode(buttonFloorPin, INPUT); //FloorButton goes with pin 6
-  pinMode(buttonAPin, INPUT); //FloorButton goes with pin 7
-  pinMode(buttonBPin, INPUT); //FloorButton goes with pin 8
-  pinMode(buttonCPin, INPUT); //FloorButton goes with pin 5
-  pinMode(buttonEndPin, INPUT); //FloorButton goes with pin 5
+  pinMode(buttonAPin, INPUT); //AButton goes with pin 7
+  pinMode(buttonBPin, INPUT); //BButton goes with pin 8
+  pinMode(buttonCPin, INPUT); //CButton goes with pin 5
+  pinMode(buttonEndPin, INPUT); //EndButton goes with pin 5
   Serial.begin(9600);
   Serial.println("Start");
 }
@@ -71,17 +71,20 @@ void loop() {
 
   //If the floor is open:
   if (FloorOpen == true) {
-    servoFloor.write(80);
-    
+    servoFloor.write(50);
+    servoBackground.write(170);
     // make sunny background on HappyEnd button
+    buttonEndState = digitalRead(buttonEndPin);
     if (buttonEndState != lastButtonEndState) {
       if (buttonEndState == HIGH){
         servoBackground.write(0);
+        Serial.println("End");
       }else {
-      servoBackground.write(180);
+      servoBackground.write(170);
       }
     }
   }
+
   lastButtonFloorState = buttonFloorState;
 
   buttonAState = digitalRead(buttonAPin);
@@ -117,15 +120,15 @@ void loop() {
   //check how many fruit are collected
   if (A && B && C) {
     Serial.println("Three fruit");
-    servoHades.write(180);
+    servoHades.write(0);
   } else if ((A && B) || (C && B) || (A && C)) {
     Serial.println("Two fruit");
-    servoHades.write(120);
+    servoHades.write(60);
   } else if (A || B || C) {
     Serial.println("One fruit");
-    servoHades.write(60);
+    servoHades.write(120);
   } else {
-    servoHades.write(0);
+    servoHades.write(180);
     Serial.println("No fruit");
   }
 
